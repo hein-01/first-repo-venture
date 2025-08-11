@@ -91,6 +91,51 @@ const Index = () => {
       </section>
 
 
+      {/* Find a shop/Start your online shop Section */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            {/* Illustration */}
+            <div className="flex-shrink-0">
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                <div className="text-white text-2xl md:text-3xl font-bold">🛍️</div>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
+                Find a shop or Start your online shop!
+              </h2>
+              <div className="space-y-2 text-sm md:text-base text-muted-foreground">
+                <div className="flex items-center justify-center md:justify-start gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">✓</span>
+                  </div>
+                  <span>Discover local businesses and compare prices easily</span>
+                </div>
+                <div className="flex items-center justify-center md:justify-start gap-2">
+                  <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">✓</span>
+                  </div>
+                  <span>List your business and reach customers both online and offline</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
+                Find Shops
+              </Button>
+              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium">
+                Start Selling
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Popular Categories Section */}
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
