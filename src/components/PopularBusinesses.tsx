@@ -301,18 +301,18 @@ const PopularBusinesses = () => {
                 
                 <div className="space-y-2 mt-2">
                   <Button 
-                    className="w-full h-8 text-xs"
-                    onClick={() => window.open(business.onlineShopUrl, '_blank')}
-                  >
-                    Go To Online Shop
-                  </Button>
-                  
-                  <Button 
                     variant="outline" 
                     className="w-full h-8 text-xs"
                     onClick={() => window.open(business.facebookUrl, '_blank')}
                   >
                     See Products Catalog
+                  </Button>
+                  
+                  <Button 
+                    className="w-full h-8 text-xs"
+                    onClick={() => window.open(business.onlineShopUrl, '_blank')}
+                  >
+                    Go To Online Shop
                   </Button>
                 </div>
               </CardContent>
