@@ -195,7 +195,7 @@ const PopularBusinesses = () => {
     return Array.from({ length: 5 }).map((_, index) => (
       <Star
         key={index}
-        className={`w-3 h-3 ${
+        className={`w-3 h-3 drop-shadow-sm ${
           index < rating ? 'fill-yellow-400 text-yellow-400' : 'fill-gray-300 text-gray-300'
         }`}
       />
