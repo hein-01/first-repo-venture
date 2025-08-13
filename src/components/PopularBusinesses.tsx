@@ -302,7 +302,7 @@ const PopularBusinesses = () => {
                 <div className="space-y-2 mt-2">
                   <Button 
                     variant="outline" 
-                    className="w-full h-8 text-xs bg-[#F5F8FA] hover:bg-[#E8EEF2] border-[#F5F8FA] hover:border-[#E8EEF2]"
+                    className="w-full h-8 text-xs bg-[#F5F8FA] hover:bg-[#E8EEF2] border-border"
                     onClick={() => window.open(business.facebookUrl, '_blank')}
                   >
                     See Products Catalog
