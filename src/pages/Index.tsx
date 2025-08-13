@@ -231,7 +231,7 @@ const Index = () => {
               <a 
                 key={product.id} 
                 href={product.link}
-                className="relative rounded-lg overflow-hidden shadow-lg cursor-pointer block transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                className="relative rounded-lg overflow-hidden shadow-lg cursor-pointer block transition-all duration-300 hover:shadow-2xl hover:-translate-y-0.5"
               >
                 <div className={`absolute inset-0 ${product.bgColor} opacity-80`}></div>
                 <img
