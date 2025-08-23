@@ -21,6 +21,7 @@ interface Business {
   website: string;
   product_images?: string[] | null;
   business_options?: string[] | null;
+  starting_price?: string | null;
 }
 
 const PopularBusinesses = () => {
@@ -157,7 +158,9 @@ const PopularBusinesses = () => {
                     <div className="flex items-center gap-1">
                       {renderStars(business.rating)}
                     </div>
-                    <span className="text-sm font-medium text-foreground">From $5</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {business.starting_price ? `From ${business.starting_price}` : 'Price on request'}
+                    </span>
                   </div>
                   
                   <div className="flex items-center gap-2">

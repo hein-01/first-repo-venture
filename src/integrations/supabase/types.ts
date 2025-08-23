@@ -281,6 +281,7 @@ export type Database = {
           name: string
           product_images: string[]
           rating: number
+          starting_price: string
           state: string
           website: string
         }[]
