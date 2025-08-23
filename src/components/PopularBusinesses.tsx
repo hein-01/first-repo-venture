@@ -106,6 +106,7 @@ const PopularBusinesses = () => {
                   pagination={{ clickable: true }}
                   spaceBetween={0}
                   slidesPerView={1}
+                  loop={true}
                   className="w-[320px] h-[200px]"
                 >
                   {business.product_images && business.product_images.length > 0 ? (
