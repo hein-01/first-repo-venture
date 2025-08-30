@@ -220,6 +220,8 @@ export default function UserDashboard() {
         );
 
       case "subscription":
+        const activePOSBusinesses = userBusinesses.filter(business => business["POS+Website"] === 1);
+        
         return (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Subscription</h2>
@@ -268,11 +270,40 @@ export default function UserDashboard() {
                 <CardTitle>POS + Website</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-lg font-medium">Not Active</p>
-                <p className="text-muted-foreground mt-2">
-                  Get a complete business solution with Point of Sale system and professional website.
-                </p>
-                <Button className="mt-4">Get Started</Button>
+                {loadingBusinesses ? (
+                  <p className="text-muted-foreground">Loading businesses...</p>
+                ) : activePOSBusinesses.length === 0 ? (
+                  <>
+                    <p className="text-lg font-medium">Not Active</p>
+                    <p className="text-muted-foreground mt-2">
+                      Get a complete business solution with Point of Sale system and professional website.
+                    </p>
+                    <Button className="mt-4">Get Started</Button>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-lg font-medium text-green-600">Active POS + Website</p>
+                    <div className="space-y-3">
+                      {activePOSBusinesses.map((business) => {
+                        const odooExpiredDate = business.odoo_expired_date 
+                          ? new Date(business.odoo_expired_date)
+                          : addDays(new Date(business.created_at), 7);
+                        return (
+                          <div key={business.id} className="border rounded-lg p-3 bg-muted/50">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium text-foreground">{business.name}</h4>
+                                <p className="text-sm text-muted-foreground">
+                                  Odoo software expired date: {format(odooExpiredDate, 'MMM dd, yyyy')}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
