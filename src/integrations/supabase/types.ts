@@ -114,6 +114,7 @@ export type Database = {
           image_url: string | null
           license_expired_date: string | null
           name: string
+          odoo_expired_date: string | null
           owner_id: string
           phone: string | null
           "POS+Website": number | null
@@ -140,6 +141,7 @@ export type Database = {
           image_url?: string | null
           license_expired_date?: string | null
           name: string
+          odoo_expired_date?: string | null
           owner_id: string
           phone?: string | null
           "POS+Website"?: number | null
@@ -166,6 +168,7 @@ export type Database = {
           image_url?: string | null
           license_expired_date?: string | null
           name?: string
+          odoo_expired_date?: string | null
           owner_id?: string
           phone?: string | null
           "POS+Website"?: number | null
