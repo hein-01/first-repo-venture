@@ -87,14 +87,14 @@ const Index = () => {
                   disableOnInteraction: false,
                 }}
                 loop={true}
-                className="h-10"
+                className="h-10 w-full"
                 modules={[Autoplay]}
               >
                 {categories.map((category) => (
-                  <SwiperSlide key={category.value} className="flex items-center justify-center">
+                  <SwiperSlide key={category.value} className="!h-10 !flex !items-center !justify-start">
                      <button
                        onClick={() => setSelectedCategory(category.value)}
-                       className={`w-full h-full text-black font-medium text-xs sm:text-sm flex items-center justify-center px-2 sm:px-3 ${
+                       className={`absolute inset-0 w-full h-full text-black font-medium text-xs sm:text-sm flex items-center justify-center ${
                          selectedCategory === category.value ? 'bg-yellow-500' : 'bg-yellow-400'
                        }`}
                      >
