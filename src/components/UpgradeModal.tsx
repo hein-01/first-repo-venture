@@ -15,10 +15,12 @@ interface UpgradeModalProps {
   businessId: string;
   businessName: string;
   odooPrice: string;
+  modalType?: 'upgrade' | 'pos-website';
   onSuccess?: () => void;
 }
 
-export default function UpgradeModal({ isOpen, onClose, businessId, businessName, odooPrice, onSuccess }: UpgradeModalProps) {
+export default function UpgradeModal({ isOpen, onClose, businessId, businessName, odooPrice, modalType = 'upgrade', onSuccess }: UpgradeModalProps) {
+  const [totalAmount, setTotalAmount] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -35,10 +37,12 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!receiptFile) {
+    if (!receiptFile || (modalType === 'upgrade' && !totalAmount)) {
       toast({
         title: "Error",
-        description: "Please upload a receipt",
+        description: modalType === 'pos-website' 
+          ? "Please upload a receipt" 
+          : "Please fill in all fields and upload a receipt",
         variant: "destructive",
       });
       return;
@@ -177,12 +181,30 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
               </div>
             </div>
             
-            <div>
-              <Label className="text-sm font-medium">Total Amount</Label>
-              <div className="mt-1 p-3 bg-muted rounded-md">
-                <p className="text-sm">The total amount is {odooPrice}</p>
+            {modalType === 'pos-website' ? (
+              <div>
+                <Label className="text-sm font-medium">Total Amount</Label>
+                <div className="mt-1 p-3 bg-muted rounded-md">
+                  <p className="text-sm">The total amount is {odooPrice}</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                <Label htmlFor="totalAmount" className="text-sm font-medium">
+                  Total Amount ($)
+                </Label>
+                <Input
+                  id="totalAmount"
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter total amount"
+                  value={totalAmount}
+                  onChange={(e) => setTotalAmount(e.target.value)}
+                  className="mt-1"
+                  required
+                />
+              </div>
+            )}
             
             <div>
               <Label htmlFor="receipt" className="text-sm font-medium">

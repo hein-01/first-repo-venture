@@ -70,6 +70,7 @@ export default function UserDashboard() {
   const [bookmarkCount, setBookmarkCount] = React.useState(0);
   const [upgradeModalOpen, setUpgradeModalOpen] = React.useState(false);
   const [selectedBusiness, setSelectedBusiness] = React.useState(null);
+  const [modalType, setModalType] = React.useState<'upgrade' | 'pos-website'>('upgrade');
   const [listingPrice, setListingPrice] = React.useState("");
   const [odooPrice, setOdooPrice] = React.useState("");
 
@@ -553,34 +554,36 @@ export default function UserDashboard() {
                                       {formatDateWithOrdinal(business.odoo_expired_date)}
                                     </span>
                                   )}
-                                  {business['POS+Website'] === 0 && (
-                                    <Button
-                                      size="sm"
-                                      onClick={() => {
-                                        setSelectedBusiness(business);
-                                        setUpgradeModalOpen(true);
-                                      }}
-                                      className="text-white w-full px-2 hover:bg-opacity-80 transition-all duration-200 hover:shadow-lg"
-                                      style={{ backgroundColor: '#D4A029' }}
-                                    >
-                                      Get POS + Website
-                                    </Button>
-                                  )}
+                                   {business['POS+Website'] === 0 && (
+                                     <Button
+                                       size="sm"
+                                       onClick={() => {
+                                         setSelectedBusiness(business);
+                                         setModalType('pos-website');
+                                         setUpgradeModalOpen(true);
+                                       }}
+                                       className="text-white w-full px-2 hover:bg-opacity-80 transition-all duration-200 hover:shadow-lg"
+                                       style={{ backgroundColor: '#D4A029' }}
+                                     >
+                                       Get POS + Website
+                                     </Button>
+                                   )}
                                 </div>
                               </TableCell>
-                              <TableCell>
-                                <Button
-                                  size="sm"
-                                  disabled={!canUpgrade}
-                                  onClick={() => {
-                                    setSelectedBusiness(business);
-                                    setUpgradeModalOpen(true);
-                                  }}
-                                  className={canUpgrade ? "bg-primary hover:bg-primary/90" : ""}
-                                >
-                                  Upgrade
-                                </Button>
-                              </TableCell>
+                               <TableCell>
+                                 <Button
+                                   size="sm"
+                                   disabled={!canUpgrade}
+                                   onClick={() => {
+                                     setSelectedBusiness(business);
+                                     setModalType('upgrade');
+                                     setUpgradeModalOpen(true);
+                                   }}
+                                   className={canUpgrade ? "bg-primary hover:bg-primary/90" : ""}
+                                 >
+                                   Upgrade
+                                 </Button>
+                               </TableCell>
                             </TableRow>
                           );
                         })}
@@ -826,6 +829,7 @@ export default function UserDashboard() {
         businessId={selectedBusiness?.id || ''}
         businessName={selectedBusiness?.name || ''}
         odooPrice={odooPrice}
+        modalType={modalType}
         onSuccess={() => window.location.reload()}
       />
       
