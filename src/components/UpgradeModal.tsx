@@ -17,15 +17,42 @@ interface UpgradeModalProps {
   odooPrice: string;
   modalType?: 'upgrade' | 'pos-website';
   onSuccess?: () => void;
+  listingPrice?: string;
+  listingExpiredDate?: string;
+  odooExpiredDate?: string;
 }
 
-export default function UpgradeModal({ isOpen, onClose, businessId, businessName, odooPrice, modalType = 'upgrade', onSuccess }: UpgradeModalProps) {
+export default function UpgradeModal({ isOpen, onClose, businessId, businessName, odooPrice, modalType = 'upgrade', onSuccess, listingPrice = '', listingExpiredDate, odooExpiredDate }: UpgradeModalProps) {
   const [totalAmount, setTotalAmount] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [odooExpiredDate, setOdooExpiredDate] = useState<string>("");
+  const [odooExpiredDateState, setOdooExpiredDate] = useState<string>("");
   const { toast } = useToast();
+
+  // Calculate total price based on expiration dates for upgrade modal
+  const calculateTotalPrice = () => {
+    if (modalType !== 'upgrade') return odooPrice;
+    
+    const currentDate = new Date();
+    const isListingExpired = listingExpiredDate && new Date(listingExpiredDate) < currentDate;
+    const isOdooExpired = odooExpiredDate && new Date(odooExpiredDate) < currentDate;
+    
+    if (isOdooExpired && isListingExpired) {
+      // Both expired: Listing + Odoo price
+      const listingNum = parseFloat(listingPrice.replace(/[^0-9.]/g, '')) || 0;
+      const odooNum = parseFloat(odooPrice.replace(/[^0-9.]/g, '')) || 0;
+      return `$${(listingNum + odooNum).toFixed(2)}`;
+    } else if (isOdooExpired) {
+      // Only Odoo expired
+      return odooPrice;
+    } else if (isListingExpired) {
+      // Only listing expired
+      return listingPrice;
+    }
+    
+    return '$0.00'; // Nothing expired
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,12 +64,10 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!receiptFile || (modalType === 'upgrade' && !totalAmount)) {
+    if (!receiptFile) {
       toast({
         title: "Error",
-        description: modalType === 'pos-website' 
-          ? "Please upload a receipt" 
-          : "Please fill in all fields and upload a receipt",
+        description: "Please upload a receipt",
         variant: "destructive",
       });
       return;
@@ -155,12 +180,12 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
               </AlertDescription>
             </Alert>
 
-            {odooExpiredDate && (
+            {odooExpiredDateState && (
               <div>
                 <Label className="text-sm font-medium">POS+Website Access Valid Until</Label>
                 <div className="mt-1 p-3 bg-muted rounded-md">
                   <p className="text-sm font-semibold text-primary">
-                    {formatDateWithOrdinal(odooExpiredDate)}
+                    {formatDateWithOrdinal(odooExpiredDateState)}
                   </p>
                 </div>
               </div>
@@ -181,30 +206,12 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
               </div>
             </div>
             
-            {modalType === 'pos-website' ? (
-              <div>
-                <Label className="text-sm font-medium">Total Amount</Label>
-                <div className="mt-1 p-3 bg-muted rounded-md">
-                  <p className="text-sm">The total amount is {odooPrice}</p>
-                </div>
+            <div>
+              <Label className="text-sm font-medium">Total Amount</Label>
+              <div className="mt-1 p-3 bg-muted rounded-md">
+                <p className="text-sm">The total amount is {modalType === 'pos-website' ? odooPrice : calculateTotalPrice()}</p>
               </div>
-            ) : (
-              <div>
-                <Label htmlFor="totalAmount" className="text-sm font-medium">
-                  Total Amount ($)
-                </Label>
-                <Input
-                  id="totalAmount"
-                  type="number"
-                  step="0.01"
-                  placeholder="Enter total amount"
-                  value={totalAmount}
-                  onChange={(e) => setTotalAmount(e.target.value)}
-                  className="mt-1"
-                  required
-                />
-              </div>
-            )}
+            </div>
             
             <div>
               <Label htmlFor="receipt" className="text-sm font-medium">

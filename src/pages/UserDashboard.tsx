@@ -831,6 +831,9 @@ export default function UserDashboard() {
         odooPrice={odooPrice}
         modalType={modalType}
         onSuccess={() => window.location.reload()}
+        listingPrice={listingPrice}
+        listingExpiredDate={selectedBusiness?.listing_expired_date}
+        odooExpiredDate={selectedBusiness?.odoo_expired_date}
       />
       
       {/* Edit Business Modal */}
