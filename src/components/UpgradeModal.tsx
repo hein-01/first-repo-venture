@@ -75,10 +75,10 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
 
     setLoading(true);
     try {
-      // First, get the current business data to check listing_expired_date
+      // First, get the current business data to check listing_expired_date and odoo_expired_date
       const { data: currentBusiness, error: fetchError } = await supabase
         .from('businesses')
-        .select('listing_expired_date')
+        .select('listing_expired_date, odoo_expired_date')
         .eq('id', businessId)
         .single();
 
@@ -99,19 +99,20 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
         .from('business-assets')
         .getPublicUrl(`receipts/${fileName}`);
 
-      // Calculate odoo_expired_date as today + 30 days
-      const odooExpiredDate = new Date();
-      odooExpiredDate.setDate(odooExpiredDate.getDate() + 30);
-
-      // Check if listing_expired_date needs to be updated (if it's in the past)
       const currentDate = new Date();
       const updateData: any = {
         receipt_url: urlData.publicUrl,
         payment_status: 'to_be_confirmed',
         last_payment_date: new Date().toISOString(),
-        odoo_expired_date: odooExpiredDate.toISOString(),
         'POS+Website': 1
       };
+
+      // Only update odoo_expired_date if current odoo_expired_date is expired (in the past) or null
+      if (!currentBusiness.odoo_expired_date || new Date(currentBusiness.odoo_expired_date) < currentDate) {
+        const odooExpiredDate = new Date();
+        odooExpiredDate.setDate(odooExpiredDate.getDate() + 30);
+        updateData.odoo_expired_date = odooExpiredDate.toISOString();
+      }
 
       // If listing_expired_date is in the past, update it to today + 365 days
       if (currentBusiness.listing_expired_date && new Date(currentBusiness.listing_expired_date) < currentDate) {
