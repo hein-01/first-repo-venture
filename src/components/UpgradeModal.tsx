@@ -14,11 +14,11 @@ interface UpgradeModalProps {
   onClose: () => void;
   businessId: string;
   businessName: string;
+  odooPrice: string;
   onSuccess?: () => void;
 }
 
-export default function UpgradeModal({ isOpen, onClose, businessId, businessName, onSuccess }: UpgradeModalProps) {
-  const [totalAmount, setTotalAmount] = useState("");
+export default function UpgradeModal({ isOpen, onClose, businessId, businessName, odooPrice, onSuccess }: UpgradeModalProps) {
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -35,10 +35,10 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!receiptFile || !totalAmount) {
+    if (!receiptFile) {
       toast({
         title: "Error",
-        description: "Please fill in all fields and upload a receipt",
+        description: "Please upload a receipt",
         variant: "destructive",
       });
       return;
@@ -178,19 +178,10 @@ export default function UpgradeModal({ isOpen, onClose, businessId, businessName
             </div>
             
             <div>
-              <Label htmlFor="totalAmount" className="text-sm font-medium">
-                Total Amount ($)
-              </Label>
-              <Input
-                id="totalAmount"
-                type="number"
-                step="0.01"
-                placeholder="Enter total amount"
-                value={totalAmount}
-                onChange={(e) => setTotalAmount(e.target.value)}
-                className="mt-1"
-                required
-              />
+              <Label className="text-sm font-medium">Total Amount</Label>
+              <div className="mt-1 p-3 bg-muted rounded-md">
+                <p className="text-sm">The total amount is {odooPrice}</p>
+              </div>
             </div>
             
             <div>

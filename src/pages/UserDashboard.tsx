@@ -825,6 +825,7 @@ export default function UserDashboard() {
         onClose={() => setUpgradeModalOpen(false)}
         businessId={selectedBusiness?.id || ''}
         businessName={selectedBusiness?.name || ''}
+        odooPrice={odooPrice}
         onSuccess={() => window.location.reload()}
       />
       
