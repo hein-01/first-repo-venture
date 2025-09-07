@@ -15,10 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import AuthModal from "./AuthModal";
 
 export const Navbar = () => {
   const { user, profile, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   
   const buttonTexts = [
     "Get Website + POS",
@@ -84,8 +86,12 @@ export const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild variant="outline" size="sm">
-                <Link to="/auth/signin">Sign in / Register</Link>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setAuthModalOpen(true)}
+              >
+                Sign in / Register
               </Button>
             )}
             
@@ -151,8 +157,13 @@ export const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild variant="ghost" size="sm" className="text-xs">
-                <Link to="/auth/signin">Sign in</Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs"
+                onClick={() => setAuthModalOpen(true)}
+              >
+                Sign in
               </Button>
             )}
             
@@ -217,6 +228,11 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
+      
+      <AuthModal 
+        open={authModalOpen} 
+        onOpenChange={setAuthModalOpen} 
+      />
     </nav>
   );
 };
