@@ -211,6 +211,22 @@ export default function ToBeConfirmedListings() {
     }
   };
 
+  const getPackageType = (listing: Business) => {
+    const currentDate = new Date();
+    const listingExpired = listing.listing_expired_date ? new Date(listing.listing_expired_date) <= currentDate : false;
+    const odooExpired = listing.odoo_expired_date ? new Date(listing.odoo_expired_date) <= currentDate : false;
+
+    if (listingExpired && odooExpired) {
+      return "Odoo & Listing";
+    } else if (odooExpired) {
+      return "Odoo";
+    } else if (listingExpired) {
+      return "Listing";
+    }
+    
+    return "";
+  };
+
   useEffect(() => {
     fetchPendingListings();
   }, []);
@@ -267,21 +283,23 @@ export default function ToBeConfirmedListings() {
                   <TableRow key={listing.id}>
                     <TableCell className="font-medium">{listing.name}</TableCell>
                     <TableCell>{listing.user_email || 'No email provided'}</TableCell>
-                    <TableCell>
-                      {listing.receipt_url ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(listing.receipt_url, '_blank')}
-                          className="flex items-center space-x-2"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          <span>View Receipt</span>
-                        </Button>
-                      ) : (
-                        <span className="text-muted-foreground">No receipt</span>
-                      )}
-                    </TableCell>
+                     <TableCell>
+                       {listing.receipt_url ? (
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           onClick={() => window.open(listing.receipt_url, '_blank')}
+                           className="flex items-center space-x-2"
+                         >
+                           <ExternalLink className="h-4 w-4" />
+                           <span>
+                             {getPackageType(listing) && `For ${getPackageType(listing)}. `}View Receipt
+                           </span>
+                         </Button>
+                       ) : (
+                         <span className="text-muted-foreground">No receipt</span>
+                       )}
+                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-yellow-600 border-yellow-300">
                         To Be Confirmed
