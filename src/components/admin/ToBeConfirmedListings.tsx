@@ -213,14 +213,22 @@ export default function ToBeConfirmedListings() {
 
   const getPackageType = (listing: Business) => {
     const currentDate = new Date();
-    const listingExpired = listing.listing_expired_date ? new Date(listing.listing_expired_date) <= currentDate : false;
-    const odooExpired = listing.odoo_expired_date ? new Date(listing.odoo_expired_date) <= currentDate : false;
+    const listingTargetDate = new Date(currentDate);
+    listingTargetDate.setDate(currentDate.getDate() + 365);
+    
+    const odooTargetDate = new Date(currentDate);
+    odooTargetDate.setDate(currentDate.getDate() + 30);
 
-    if (listingExpired && odooExpired) {
+    const listingMatches = listing.listing_expired_date ? 
+      new Date(listing.listing_expired_date).toDateString() === listingTargetDate.toDateString() : false;
+    const odooMatches = listing.odoo_expired_date ? 
+      new Date(listing.odoo_expired_date).toDateString() === odooTargetDate.toDateString() : false;
+
+    if (listingMatches && odooMatches) {
       return "Odoo & Listing";
-    } else if (odooExpired) {
+    } else if (odooMatches) {
       return "Odoo";
-    } else if (listingExpired) {
+    } else if (listingMatches) {
       return "Listing";
     }
     
