@@ -57,7 +57,7 @@ const sidebarItems = [
 ];
 
 export default function UserDashboard() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = React.useState("dashboard");
   const [userBusinesses, setUserBusinesses] = React.useState([]);
@@ -751,6 +751,17 @@ export default function UserDashboard() {
       </Sidebar>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <span className="text-lg">Loading dashboard...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
