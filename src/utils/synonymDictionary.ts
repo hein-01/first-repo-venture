@@ -162,20 +162,49 @@ export function expandSearchTerms(query: string): { exactPhrases: string[], indi
   // Add original query as exact phrase
   exactPhrases.add(originalQuery);
   
-  // First, try to match the entire query as a phrase
+  // First, try to match the entire query as a phrase and expand with synonyms
   const phraseVariations = generatePhraseVariations(originalQuery);
   phraseVariations.forEach(variation => exactPhrases.add(variation));
   
-  // Handle individual words only if no exact phrase match is found
+  // Check for exact phrase matches in synonym dictionary and add their synonyms
+  const normalizedQuery = normalizeText(originalQuery);
+  Object.keys(synonymDictionary).forEach(key => {
+    const normalizedKey = normalizeText(key);
+    if (normalizedKey === normalizedQuery || key.toLowerCase() === originalQuery) {
+      // Add the key itself and all its synonyms as exact phrases
+      exactPhrases.add(key.toLowerCase());
+      exactPhrases.add(normalizedKey);
+      synonymDictionary[key].forEach(synonym => {
+        exactPhrases.add(synonym.toLowerCase());
+        exactPhrases.add(normalizeText(synonym));
+      });
+    }
+  });
+  
+  // Also check if any synonyms point back to our query
+  Object.entries(synonymDictionary).forEach(([key, synonyms]) => {
+    synonyms.forEach(synonym => {
+      if (normalizeText(synonym) === normalizedQuery || synonym.toLowerCase() === originalQuery) {
+        // Add the key and all other synonyms as exact phrases
+        exactPhrases.add(key.toLowerCase());
+        exactPhrases.add(normalizeText(key));
+        synonyms.forEach(syn => {
+          exactPhrases.add(syn.toLowerCase());
+          exactPhrases.add(normalizeText(syn));
+        });
+      }
+    });
+  });
+  
+  // Handle individual words for fallback matching
   const terms = originalQuery.split(/\s+/).filter(term => term.length > 0);
   
-  // For single word queries or when we need individual terms
   terms.forEach(term => {
     const normalizedTerm = normalizeText(term);
     individualTerms.add(term);
     individualTerms.add(normalizedTerm);
     
-    // Add synonyms for individual terms (but be more restrictive)
+    // Add synonyms for individual terms
     if (synonymDictionary[term]) {
       synonymDictionary[term].forEach(synonym => {
         individualTerms.add(synonym.toLowerCase());

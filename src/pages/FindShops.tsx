@@ -96,28 +96,27 @@ export default function FindShops() {
         // For improved accuracy, prioritize exact phrases over individual terms
         const trimmedTerm = searchTerm.toLowerCase().trim();
         
-        // Check if it's a compound term that should be treated as exact phrase
+        // Always use synonym expansion for better search results
+        const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
+        
+        // Check if it's a compound term that should prioritize exact phrase matching
         const isCompoundTerm = trimmedTerm.includes("'") || 
                               (trimmedTerm.split(/\s+/).length > 1 && 
                                (trimmedTerm.includes("women") || trimmedTerm.includes("men") || 
                                 trimmedTerm.includes("kids") || trimmedTerm.includes("children")));
         
-        if (isCompoundTerm) {
-          // For compound terms like "women's shoes", send as single term for exact matching
-          searchTerms = [trimmedTerm];
+        if (isCompoundTerm && exactPhrases.length > 0) {
+          // For compound terms, prioritize exact phrases (including synonyms)
+          searchTerms = exactPhrases;
+        } else if (exactPhrases.length > 0) {
+          // Use exact phrases when available
+          searchTerms = exactPhrases;
         } else {
-          // For other multi-word queries, use enhanced synonym expansion
-          const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
-          
-          if (exactPhrases.length > 0) {
-            searchTerms = exactPhrases;
+          const words = trimmedTerm.split(/\s+/);
+          if (words.length > 1) {
+            searchTerms = words; // Let RPC handle AND logic for multi-word queries
           } else {
-            const words = trimmedTerm.split(/\s+/);
-            if (words.length > 1) {
-              searchTerms = words; // Let RPC handle AND logic for multi-word queries
-            } else {
-              searchTerms = individualTerms.length > 0 ? individualTerms : [searchTerm];
-            }
+            searchTerms = individualTerms.length > 0 ? individualTerms : [searchTerm];
           }
         }
       }

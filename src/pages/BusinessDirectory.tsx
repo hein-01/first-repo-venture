@@ -89,38 +89,40 @@ export default function BusinessDirectory() {
       if (searchTerm) {
         const trimmedTerm = searchTerm.toLowerCase().trim();
         
-        // For compound product terms, prioritize exact matching
+        // Always use synonym expansion for comprehensive search
+        const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
+        
+        // Check if it's a compound term that should prioritize exact matching
         const isCompoundTerm = trimmedTerm.includes("'") || 
                               (trimmedTerm.split(/\s+/).length > 1 && 
                                (trimmedTerm.includes("women") || trimmedTerm.includes("men") || 
                                 trimmedTerm.includes("kids") || trimmedTerm.includes("children")));
         
-        if (isCompoundTerm) {
-          // Search for exact term in product catalog items
-          const exactQuery = `products_catalog.ilike.%${trimmedTerm}%,name.ilike.%${trimmedTerm}%,description.ilike.%${trimmedTerm}%`;
+        if (isCompoundTerm && exactPhrases.length > 0) {
+          // For compound terms, search using all exact phrase variations (including synonyms)
+          const exactQuery = exactPhrases
+            .map(phrase => `name.ilike.%${phrase}%,description.ilike.%${phrase}%,products_catalog.ilike.%${phrase}%`)
+            .join(',');
+          query = query.or(exactQuery);
+        } else if (exactPhrases.length > 0) {
+          // Use exact phrases when available
+          const exactQuery = exactPhrases
+            .map(phrase => `name.ilike.%${phrase}%,description.ilike.%${phrase}%,products_catalog.ilike.%${phrase}%`)
+            .join(',');
           query = query.or(exactQuery);
         } else {
-          const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
-          
-          if (exactPhrases.length > 0) {
-            const exactQuery = exactPhrases
-              .map(phrase => `name.ilike.%${phrase}%,description.ilike.%${phrase}%,products_catalog.ilike.%${phrase}%`)
-              .join(',');
-            query = query.or(exactQuery);
+          // For multi-word queries, use AND logic
+          const words = trimmedTerm.split(/\s+/);
+          if (words.length > 1) {
+            words.forEach(word => {
+              const wordQuery = `name.ilike.%${word}%,description.ilike.%${word}%,products_catalog.ilike.%${word}%`;
+              query = query.or(wordQuery);
+            });
           } else {
-            // For multi-word queries, use AND logic
-            const words = trimmedTerm.split(/\s+/);
-            if (words.length > 1) {
-              words.forEach(word => {
-                const wordQuery = `name.ilike.%${word}%,description.ilike.%${word}%,products_catalog.ilike.%${word}%`;
-                query = query.or(wordQuery);
-              });
-            } else {
-              const searchQuery = individualTerms
-                .map(term => `name.ilike.%${term}%,description.ilike.%${term}%,products_catalog.ilike.%${term}%`)
-                .join(',');
-              query = query.or(searchQuery);
-            }
+            const searchQuery = individualTerms
+              .map(term => `name.ilike.%${term}%,description.ilike.%${term}%,products_catalog.ilike.%${term}%`)
+              .join(',');
+            query = query.or(searchQuery);
           }
         }
       }
