@@ -94,8 +94,20 @@ export default function FindShops() {
       let searchTerms = null;
       if (searchTerm) {
         // Use enhanced synonym expansion for better matching
-        const expandedTerms = expandSearchTerms(searchTerm);
-        searchTerms = expandedTerms.length > 0 ? expandedTerms : [searchTerm];
+        const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
+        
+        // Prioritize exact phrases for better precision
+        if (exactPhrases.length > 0) {
+          searchTerms = exactPhrases;
+        } else {
+          // For multi-word queries, use individual words for AND logic in RPC
+          const words = searchTerm.toLowerCase().trim().split(/\s+/);
+          if (words.length > 1) {
+            searchTerms = words; // Let RPC handle AND logic
+          } else {
+            searchTerms = individualTerms.length > 0 ? individualTerms : [searchTerm];
+          }
+        }
       }
       
       // Get category ID for selected category

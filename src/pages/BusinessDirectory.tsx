@@ -87,11 +87,31 @@ export default function BusinessDirectory() {
 
       // Apply enhanced search filter with synonyms
       if (searchTerm) {
-        const expandedTerms = expandSearchTerms(searchTerm);
-        const searchQuery = expandedTerms
-          .map(term => `name.ilike.%${term}%,description.ilike.%${term}%,products_catalog.ilike.%${term}%`)
-          .join(',');
-        query = query.or(searchQuery);
+        const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
+        
+        // First try to match exact phrases (higher priority)
+        if (exactPhrases.length > 0) {
+          const exactQuery = exactPhrases
+            .map(phrase => `name.ilike.%${phrase}%,description.ilike.%${phrase}%,products_catalog.ilike.%${phrase}%`)
+            .join(',');
+          query = query.or(exactQuery);
+        } else {
+          // Fall back to individual terms with AND logic for multi-word queries
+          const words = searchTerm.toLowerCase().trim().split(/\s+/);
+          if (words.length > 1) {
+            // For multi-word queries, require ALL words to be present (AND logic)
+            words.forEach(word => {
+              const wordQuery = `name.ilike.%${word}%,description.ilike.%${word}%,products_catalog.ilike.%${word}%`;
+              query = query.or(wordQuery);
+            });
+          } else {
+            // For single word, use expanded terms with OR logic
+            const searchQuery = individualTerms
+              .map(term => `name.ilike.%${term}%,description.ilike.%${term}%,products_catalog.ilike.%${term}%`)
+              .join(',');
+            query = query.or(searchQuery);
+          }
+        }
       }
 
       // Apply category filter with normalization

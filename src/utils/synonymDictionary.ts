@@ -150,63 +150,51 @@ function generatePhraseVariations(phrase: string): string[] {
 /**
  * Expands search terms with synonyms and phrase variations
  * @param query - The search query string
- * @returns Array of expanded search terms including original, synonyms, and variations
+ * @returns Object with exact phrases and individual terms for better matching
  */
-export function expandSearchTerms(query: string): string[] {
-  if (!query || typeof query !== 'string') return [];
+export function expandSearchTerms(query: string): { exactPhrases: string[], individualTerms: string[] } {
+  if (!query || typeof query !== 'string') return { exactPhrases: [], individualTerms: [] };
   
-  const expandedTerms = new Set<string>();
+  const exactPhrases = new Set<string>();
+  const individualTerms = new Set<string>();
   const originalQuery = query.toLowerCase().trim();
   
-  // Add original query
-  expandedTerms.add(originalQuery);
+  // Add original query as exact phrase
+  exactPhrases.add(originalQuery);
   
   // First, try to match the entire query as a phrase
   const phraseVariations = generatePhraseVariations(originalQuery);
-  phraseVariations.forEach(variation => expandedTerms.add(variation));
+  phraseVariations.forEach(variation => exactPhrases.add(variation));
   
-  // Then handle individual words
-  const terms = originalQuery
-    .split(/\s+/)
-    .filter(term => term.length > 0);
+  // Handle individual words only if no exact phrase match is found
+  const terms = originalQuery.split(/\s+/).filter(term => term.length > 0);
   
-  // Add original individual terms
-  terms.forEach(term => {
-    expandedTerms.add(term);
-    expandedTerms.add(normalizeText(term));
-  });
-  
-  // Add synonyms for each individual term
+  // For single word queries or when we need individual terms
   terms.forEach(term => {
     const normalizedTerm = normalizeText(term);
+    individualTerms.add(term);
+    individualTerms.add(normalizedTerm);
     
-    // Check direct synonym matches
+    // Add synonyms for individual terms (but be more restrictive)
     if (synonymDictionary[term]) {
       synonymDictionary[term].forEach(synonym => {
-        expandedTerms.add(synonym.toLowerCase());
-        expandedTerms.add(normalizeText(synonym));
+        individualTerms.add(synonym.toLowerCase());
+        individualTerms.add(normalizeText(synonym));
       });
     }
     
     if (synonymDictionary[normalizedTerm]) {
       synonymDictionary[normalizedTerm].forEach(synonym => {
-        expandedTerms.add(synonym.toLowerCase());
-        expandedTerms.add(normalizeText(synonym));
+        individualTerms.add(synonym.toLowerCase());
+        individualTerms.add(normalizeText(synonym));
       });
     }
-    
-    // Check if any synonym dictionary key contains this term
-    Object.keys(synonymDictionary).forEach(key => {
-      if (normalizeText(key).includes(normalizedTerm) || key.toLowerCase().includes(term)) {
-        synonymDictionary[key].forEach(synonym => {
-          expandedTerms.add(synonym.toLowerCase());
-          expandedTerms.add(normalizeText(synonym));
-        });
-      }
-    });
   });
   
-  return Array.from(expandedTerms).filter(term => term.length > 0);
+  return {
+    exactPhrases: Array.from(exactPhrases).filter(term => term.length > 0),
+    individualTerms: Array.from(individualTerms).filter(term => term.length > 0)
+  };
 }
 
 /**
