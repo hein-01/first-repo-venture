@@ -85,31 +85,42 @@ export default function BusinessDirectory() {
         .order("rating", { ascending: false })
         .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
 
-      // Apply enhanced search filter with synonyms
+      // Apply enhanced search filter with improved product catalog matching
       if (searchTerm) {
-        const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
+        const trimmedTerm = searchTerm.toLowerCase().trim();
         
-        // First try to match exact phrases (higher priority)
-        if (exactPhrases.length > 0) {
-          const exactQuery = exactPhrases
-            .map(phrase => `name.ilike.%${phrase}%,description.ilike.%${phrase}%,products_catalog.ilike.%${phrase}%`)
-            .join(',');
+        // For compound product terms, prioritize exact matching
+        const isCompoundTerm = trimmedTerm.includes("'") || 
+                              (trimmedTerm.split(/\s+/).length > 1 && 
+                               (trimmedTerm.includes("women") || trimmedTerm.includes("men") || 
+                                trimmedTerm.includes("kids") || trimmedTerm.includes("children")));
+        
+        if (isCompoundTerm) {
+          // Search for exact term in product catalog items
+          const exactQuery = `products_catalog.ilike.%${trimmedTerm}%,name.ilike.%${trimmedTerm}%,description.ilike.%${trimmedTerm}%`;
           query = query.or(exactQuery);
         } else {
-          // Fall back to individual terms with AND logic for multi-word queries
-          const words = searchTerm.toLowerCase().trim().split(/\s+/);
-          if (words.length > 1) {
-            // For multi-word queries, require ALL words to be present (AND logic)
-            words.forEach(word => {
-              const wordQuery = `name.ilike.%${word}%,description.ilike.%${word}%,products_catalog.ilike.%${word}%`;
-              query = query.or(wordQuery);
-            });
-          } else {
-            // For single word, use expanded terms with OR logic
-            const searchQuery = individualTerms
-              .map(term => `name.ilike.%${term}%,description.ilike.%${term}%,products_catalog.ilike.%${term}%`)
+          const { exactPhrases, individualTerms } = expandSearchTerms(searchTerm);
+          
+          if (exactPhrases.length > 0) {
+            const exactQuery = exactPhrases
+              .map(phrase => `name.ilike.%${phrase}%,description.ilike.%${phrase}%,products_catalog.ilike.%${phrase}%`)
               .join(',');
-            query = query.or(searchQuery);
+            query = query.or(exactQuery);
+          } else {
+            // For multi-word queries, use AND logic
+            const words = trimmedTerm.split(/\s+/);
+            if (words.length > 1) {
+              words.forEach(word => {
+                const wordQuery = `name.ilike.%${word}%,description.ilike.%${word}%,products_catalog.ilike.%${word}%`;
+                query = query.or(wordQuery);
+              });
+            } else {
+              const searchQuery = individualTerms
+                .map(term => `name.ilike.%${term}%,description.ilike.%${term}%,products_catalog.ilike.%${term}%`)
+                .join(',');
+              query = query.or(searchQuery);
+            }
           }
         }
       }
