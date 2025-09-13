@@ -297,7 +297,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
   return (
     <>
       <Card className="group w-[290px] h-[555px] flex flex-col shadow-xl border-2 hover:shadow-2xl hover:border-primary/20 transition-all duration-300 mx-auto bg-gradient-to-b from-background to-muted/20">
-      <div className="relative overflow-hidden rounded-t-lg">
+      <div className="relative overflow-hidden rounded-t-lg h-[290px]">
           <Swiper
             modules={[Navigation, Pagination]}
             navigation={{
