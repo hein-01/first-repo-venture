@@ -401,128 +401,118 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
         </Button>
       </div>
       
-      {/* Light green section positioned under the product images */}
-      <div className="h-[26px] bg-[#58BB8A] flex items-center justify-between px-2">
-        <Dialog open={openReviewModal} onOpenChange={(open) => {
-          setOpenReviewModal(open);
-          if (!open) {
-            setShowAuthInReviewModal(false);
-          }
-        }}>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-4 px-2 text-[9px] text-black bg-white border-gray-300 hover:bg-gray-50"
-            >
-              REVIEWS
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {showAuthInReviewModal ? 'Sign In to Review' : `Reviews for ${business.name}`}
-              </DialogTitle>
-            </DialogHeader>
-            
-            {showAuthInReviewModal ? (
-              /* Authentication Form */
-              <div className="space-y-4">
-                <InlineAuthForm 
-                  onSuccess={() => {
-                    setShowAuthInReviewModal(false);
-                    toast({
-                      title: "Success",
-                      description: "You can now submit your review!",
-                    });
-                  }}
-                />
-                <div className="flex justify-center">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => setShowAuthInReviewModal(false)}
-                    className="text-sm"
-                  >
-                    Back to Reviews
-                  </Button>
-                </div>
+      {/* Green section temporarily removed */}
+      
+      {/* Hidden dialog for reviews functionality */}
+      <Dialog open={openReviewModal} onOpenChange={(open) => {
+        setOpenReviewModal(open);
+        if (!open) {
+          setShowAuthInReviewModal(false);
+        }
+      }}>
+        <DialogTrigger asChild>
+          <div style={{ display: 'none' }}>
+            <Button>REVIEWS</Button>
+          </div>
+        </DialogTrigger>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {showAuthInReviewModal ? 'Sign In to Review' : `Reviews for ${business.name}`}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {showAuthInReviewModal ? (
+            /* Authentication Form */
+            <div className="space-y-4">
+              <InlineAuthForm 
+                onSuccess={() => {
+                  setShowAuthInReviewModal(false);
+                  toast({
+                    title: "Success",
+                    description: "You can now submit your review!",
+                  });
+                }}
+              />
+              <div className="flex justify-center">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setShowAuthInReviewModal(false)}
+                  className="text-sm"
+                >
+                  Back to Reviews
+                </Button>
               </div>
-            ) : (
-              <>
-                {/* Existing Reviews Section */}
-                <div className="space-y-4 mb-6">
-                  {loadingReviews ? (
-                    <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
-                      <p className="text-sm text-muted-foreground mt-2">Loading reviews...</p>
-                    </div>
-                  ) : existingReviews.length > 0 ? (
-                    <>
-                      <h3 className="font-medium text-sm text-foreground">Customer Reviews ({existingReviews.length})</h3>
-                      <div className="space-y-3 max-h-60 overflow-y-auto">
-                        {existingReviews.map((review) => (
-                          <div key={review.id} className="border rounded-lg p-3 bg-muted/30">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-sm">
-                                {review.profiles?.display_name || 'Anonymous'}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {formatDateWithOrdinal(review.created_at)}
-                              </span>
-                            </div>
-                            <p className="text-sm text-foreground">{review.comment}</p>
+            </div>
+          ) : (
+            <>
+              {/* Existing Reviews Section */}
+              <div className="space-y-4 mb-6">
+                {loadingReviews ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                    <p className="text-sm text-muted-foreground mt-2">Loading reviews...</p>
+                  </div>
+                ) : existingReviews.length > 0 ? (
+                  <>
+                    <h3 className="font-medium text-sm text-foreground">Customer Reviews ({existingReviews.length})</h3>
+                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                      {existingReviews.map((review) => (
+                        <div key={review.id} className="border rounded-lg p-3 bg-muted/30">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">
+                              {review.profiles?.display_name || 'Anonymous'}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {formatDateWithOrdinal(review.created_at)}
+                            </span>
                           </div>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center py-4">
-                      <p className="text-sm text-muted-foreground">No reviews yet. Be the first to review!</p>
+                          <p className="text-sm text-foreground">{review.comment}</p>
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground">No reviews yet. Be the first to review!</p>
+                  </div>
+                )}
+              </div>
+              
+              {/* Review Form */}
+              <div className="border-t pt-4">
+                <h3 className="font-medium text-sm text-foreground mb-4">Write a Review</h3>
+                <form onSubmit={handleReviewSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="comment">Your Review</Label>
+                  <Textarea
+                    id="comment"
+                    placeholder="Share your experience with this business..."
+                    value={reviewData.comment}
+                    onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                    required
+                    rows={4}
+                  />
                 </div>
                 
-                {/* Review Form */}
-                <div className="border-t pt-4">
-                  <h3 className="font-medium text-sm text-foreground mb-4">Write a Review</h3>
-                  <form onSubmit={handleReviewSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="comment">Your Review</Label>
-                    <Textarea
-                      id="comment"
-                      placeholder="Share your experience with this business..."
-                      value={reviewData.comment}
-                      onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
-                      required
-                      rows={4}
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end gap-2">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setOpenReviewModal(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting || !reviewData.comment.trim()}>
-                      {isSubmitting ? 'Submitting...' : 'Submit Review'}
-                    </Button>
-                  </div>
-                </form>
+                <div className="flex justify-end gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setOpenReviewModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting || !reviewData.comment.trim()}>
+                    {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                  </Button>
                 </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
-        {isLicenseValid(business.license_expired_date) && (
-          <div className="flex items-center gap-1">
-            <Check className="w-3 h-3 text-green-600 bg-white rounded-full p-0.5" />
-            <span className="text-white text-[9px] font-medium uppercase">Verified</span>
-          </div>
-        )}
-      </div>
+              </form>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
       
       <CardContent className="flex-1 pt-3 px-3 pb-2 flex flex-col justify-between">
         <div className="space-y-3">
