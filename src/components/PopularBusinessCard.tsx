@@ -541,7 +541,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
         </DialogContent>
       </Dialog>
       
-      <CardContent className="flex-1 pt-3 px-3 pb-2 flex flex-col justify-between">
+      <CardContent className="flex-1 pt-3 px-3 pb-2 flex flex-col justify-between mt-[35px]">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <div className="relative">
