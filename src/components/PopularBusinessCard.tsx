@@ -402,7 +402,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
       </div>
       
       {/* Green reviews section - positioned at exactly 291px from top */}
-      <div className="absolute top-[291px] left-0 w-full h-[60px] bg-green-600 flex items-center justify-between px-4 z-10">
+      <div className="absolute top-[291px] left-0 w-full h-[30px] bg-green-600 flex items-center justify-between px-4 z-10">
         <Dialog open={openReviewModal} onOpenChange={(open) => {
           setOpenReviewModal(open);
           if (!open) {
@@ -412,19 +412,19 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
           <DialogTrigger asChild>
             <Button 
               variant="ghost" 
-              className="flex items-center gap-2 text-white hover:bg-white/20 p-2 h-auto"
+              className="flex items-center gap-1 text-white hover:bg-white/20 p-1 h-auto"
             >
-              <Star className="w-4 h-4 fill-white" />
-              <span className="text-sm font-medium">REVIEWS</span>
+              <Star className="w-3 h-3 fill-white" />
+              <span className="text-xs font-medium">REVIEWS</span>
             </Button>
           </DialogTrigger>
         </Dialog>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {isLicenseValid(business.license_expired_date) && (
             <>
-              <BadgeCheck className="w-4 h-4 text-white" />
-              <span className="text-white text-sm font-medium">VERIFIED</span>
+              <BadgeCheck className="w-3 h-3 text-white" />
+              <span className="text-white text-xs font-medium">VERIFIED</span>
             </>
           )}
         </div>
