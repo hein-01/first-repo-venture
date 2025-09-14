@@ -296,7 +296,7 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
 
   return (
     <>
-      <Card className="group w-[290px] h-[555px] flex flex-col shadow-xl border-2 hover:shadow-2xl hover:border-primary/20 transition-all duration-300 mx-auto bg-gradient-to-b from-background to-muted/20">
+      <Card className="group w-[290px] h-[615px] flex flex-col shadow-xl border-2 hover:shadow-2xl hover:border-primary/20 transition-all duration-300 mx-auto bg-gradient-to-b from-background to-muted/20 relative">
       <div className="relative overflow-hidden rounded-t-lg h-[290px]">
           <Swiper
             modules={[Navigation, Pagination]}
@@ -401,7 +401,34 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
         </Button>
       </div>
       
-      {/* Green section temporarily removed */}
+      {/* Green reviews section - positioned at exactly 291px from top */}
+      <div className="absolute top-[291px] left-0 w-full h-[60px] bg-green-600 flex items-center justify-between px-4 z-10">
+        <Dialog open={openReviewModal} onOpenChange={(open) => {
+          setOpenReviewModal(open);
+          if (!open) {
+            setShowAuthInReviewModal(false);
+          }
+        }}>
+          <DialogTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="flex items-center gap-2 text-white hover:bg-white/20 p-2 h-auto"
+            >
+              <Star className="w-4 h-4 fill-white" />
+              <span className="text-sm font-medium">REVIEWS</span>
+            </Button>
+          </DialogTrigger>
+        </Dialog>
+        
+        <div className="flex items-center gap-2">
+          {isLicenseValid(business.license_expired_date) && (
+            <>
+              <BadgeCheck className="w-4 h-4 text-white" />
+              <span className="text-white text-sm font-medium">VERIFIED</span>
+            </>
+          )}
+        </div>
+      </div>
       
       {/* Hidden dialog for reviews functionality */}
       <Dialog open={openReviewModal} onOpenChange={(open) => {
