@@ -641,12 +641,17 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
               />
             )}
             {business.phone && (
-              <img 
-                src={phoneIcon}
-                alt="Call"
-                className="w-6 h-6 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+              <div 
+                className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => window.open(`tel:${business.phone}`, '_self')}
-              />
+              >
+                <img 
+                  src={phoneIcon}
+                  alt="Call"
+                  className="w-6 h-6 rounded-lg"
+                />
+                <span className="text-xs text-foreground">Call</span>
+              </div>
             )}
           </div>
        </div>
