@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Bookmark, Check, BadgeCheck, MapPin, ChevronRight, ChevronLeft, Star } from 'lucide-react';
 import facebookIcon from "@/assets/facebook-icon.jpg";
 import tiktokIcon from "@/assets/tiktok-icon.jpg";
-import phoneIcon from "@/assets/phone-icon.jpg";
+import phoneIcon from "@/assets/phone-icon-new.png";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { useToast } from '@/hooks/use-toast';
