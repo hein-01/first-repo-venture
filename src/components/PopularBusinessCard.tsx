@@ -379,8 +379,8 @@ export const PopularBusinessCard = ({ business }: PopularBusinessCardProps) => {
         
         {/* Starting Price Tag - Top Left Corner */}
         {business.starting_price && (
-          <div className="absolute top-2 left-2 z-40">
-            <span className="bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded shadow-lg">
+          <div className="absolute top-2 left-0 z-40">
+            <span className="bg-primary text-primary-foreground text-xs font-medium px-2 py-1 shadow-lg">
               From {business.starting_price}
             </span>
           </div>
